@@ -2,6 +2,11 @@
 name = "zyte-api-rs"
 version = "0.1.0"
 edition = "2021"
+description = "Use the Zyte API Proxy -- Unofficial & Unstable"
+license = "MIT"
+homepage = "https://github.com/isaacimholt/zyte-api-rs"
+repository = "https://github.com/isaacimholt/zyte-api-rs"
+documentation = "https://github.com/isaacimholt/zyte-api-rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
