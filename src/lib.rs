@@ -1,4 +1,4 @@
-//! # zyte-api-rs
+//! # zyte-api-rs 
 //!
 //! This is an unofficial rust package for the Zyte API.
 use base64::{engine::general_purpose, Engine as _};
