@@ -26,19 +26,19 @@ pub struct Response {
 }
 
 pub struct ZyteApi {
-    client: reqwest::blocking::Client,
+    client: reqwest::Client,
     api_key: String,
     api_url: String,
 }
 impl ZyteApi {
     pub fn new(api_key: String) -> ZyteApi {
         ZyteApi {
-            client: reqwest::blocking::Client::new(),
+            client: reqwest::Client::new(),
             api_key,
             api_url: "https://api.zyte.com/v1/extract".to_string(),
         }
     }
-    pub fn get(&self, url: &str) -> Response {
+    pub async fn get(&self, url: &str) -> Response {
         let request = Request {
             url: http::Uri::from_str(url).unwrap(),
             http_response_body: Some(true),
@@ -52,8 +52,10 @@ impl ZyteApi {
             .basic_auth(&self.api_key, Some(""))
             .json(&request)
             .send()
+            .await
             .unwrap()
             .text()
+            .await
             .unwrap();
 
         // load json into Response struct
