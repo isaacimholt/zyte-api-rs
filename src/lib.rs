@@ -19,10 +19,10 @@ pub struct Request {
 #[serde(rename_all = "camelCase")]
 pub struct Response {
     #[serde(with = "http_serde::uri")]
-    url: http::Uri,
-    http_response_body: String,
+    pub url: http::Uri,
+    pub http_response_body: String,
     #[serde(with = "http_serde::status_code")]
-    status_code: http::StatusCode,
+    pub status_code: http::StatusCode,
 }
 
 pub struct ZyteApi {
