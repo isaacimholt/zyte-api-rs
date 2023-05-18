@@ -69,7 +69,7 @@ impl ZyteApi {
         // Convert to real String and insert back into Response
         response.http_response_body = b.to_string(); // TODO: do this with serde
 
-        response
+        Ok(response)
     }
 }
 
