@@ -47,18 +47,15 @@ impl ZyteApi {
         };
 
         // Use Reqwest client to POST to Zyte API and get page source
-        let json = self
+        let mut response = self
             .client
             .post(&self.api_url)
             .basic_auth(&self.api_key, Some(""))
             .json(&request)
             .send()
             .await?
-            .text() // TODO: use .json()
+            .json::<Response>()
             .await?;
-
-        // load json into Response struct
-        let mut response: Response = serde_json::from_str(&json)?;
 
         // decode http_response_body from base 64
         let b = &general_purpose::STANDARD.decode(response.http_response_body)?;
