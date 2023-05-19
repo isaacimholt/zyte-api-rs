@@ -33,5 +33,5 @@ async fn get_google() {
 
 ## Notes
 
-- An important design goal is to have `zyte-api-rs`'s `Response` object mirrors (as much as possible) the structure of the `Response` schema from the official api: <https://docs.zyte.com/zyte-api/usage/reference.html>
+- An important design goal is to have `zyte-api-rs`'s `Response` object mirror (as much as possible) the structure of the `Response` schema from the official api: <https://docs.zyte.com/zyte-api/usage/reference.html>
 - The status code is actually an instance of [`http::StatusCode`](https://docs.rs/http/latest/http/status/struct.StatusCode.html) which allows more useful semantics such as `status_code.is_success()`.
