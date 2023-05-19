@@ -15,9 +15,18 @@ This is an unofficial, unstable, unfinished crate. However normal usage with `HT
 cargo add zyte-api-rs
 ```
 
-## Usage
+## Example
 
 ```rust
-let zyte_api: ZyteApi = ZyteApi::new("<MY-API-KEY-HERE>");
-let response = zyte_api.get("https://www.google.com/").await;
+use zyte_api_rs::ZyteApi;
+
+#[tokio::main]
+async fn get_google() {
+    let zyte_api = ZyteApi::new("<MY_ZYTE_API_KEY>");
+    let response = zyte_api.get("https://www.google.com/").await.unwrap();
+    if response.status_code.is_success() {
+        println!("{}", response.http_response_body);
+    }
+}
+
 ```
