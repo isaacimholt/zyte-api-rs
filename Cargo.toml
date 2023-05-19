@@ -1,6 +1,6 @@
 [package]
 name = "zyte-api-rs"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "Use the Zyte API Proxy -- Unofficial & Unstable"
 license = "MIT"
