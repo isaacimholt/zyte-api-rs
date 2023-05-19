@@ -32,10 +32,10 @@ pub struct ZyteApi {
     api_url: String,
 }
 impl ZyteApi {
-    pub fn new(api_key: String) -> ZyteApi {
+    pub fn new(api_key: &str) -> ZyteApi {
         ZyteApi {
             client: reqwest::Client::new(),
-            api_key,
+            api_key: api_key.to_string(),
             api_url: "https://api.zyte.com/v1/extract".to_string(),
         }
     }

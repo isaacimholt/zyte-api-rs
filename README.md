@@ -18,6 +18,6 @@ cargo add zyte-api-rs
 ## Usage
 
 ```rust
-let zyte_api: ZyteApi = ZyteApi::new("<MY-API-KEY-HERE>".to_string());
+let zyte_api: ZyteApi = ZyteApi::new("<MY-API-KEY-HERE>");
 let response = zyte_api.get("https://www.google.com/").await;
 ```
