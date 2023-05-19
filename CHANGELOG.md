@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.1.5] - 2023-05-19
 
 ### Bug Fixes
 
@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Response fields should be public
 - Use Box<dyn Error> for errors
 - Missing Ok()
+- ZyteApi::new() is now &str instead of String
 
 ### Testing
 
