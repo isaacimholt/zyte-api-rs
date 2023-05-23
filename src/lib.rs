@@ -2,7 +2,8 @@
 //!
 //! This is an unofficial rust package for the Zyte API.
 use base64::{engine::general_purpose, Engine as _};
-use serde::{Deserialize, Serialize};
+use http::Method;
+use serde::{Deserialize, Serialize, Serializer};
 use std::error::Error;
 use std::str::FromStr;
 
@@ -13,11 +14,32 @@ pub struct Request {
     #[serde(with = "http_serde::uri")]
     url: http::Uri,
     http_response_body: Option<bool>,
+    #[serde(serialize_with = "method_opt")]
+    http_request_method: Option<http::Method>,
+    #[serde(flatten)]
+    http_request_body_type: Option<HttpRequestBodyType>,
+}
+
+/// https://stackoverflow.com/a/76143471/196870
+fn method_opt<S: Serializer>(method_opt: &Option<http::Method>, ser: S) -> Result<S::Ok, S::Error> {
+    match method_opt {
+        Some(method) => http_serde::method::serialize(method, ser),
+        // This won't be encountered when using skip_serializing_none
+        None => ser.serialize_none(),
+    }
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub enum HttpRequestBodyType {
+    HttpRequestBody(String), // todo: body should be bytes
+    HttpRequestText(String),
 }
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
+#[serde(deny_unknown_fields)]
 pub struct Response {
     #[serde(with = "http_serde::uri")]
     pub url: http::Uri,
@@ -26,32 +48,42 @@ pub struct Response {
     pub status_code: http::StatusCode,
 }
 
-pub struct ZyteApi {
-    client: reqwest::Client,
-    api_key: String,
-    api_url: String,
+pub struct RequestBuilder {
+    client: ZyteApi,
+    request: Request,
 }
-impl ZyteApi {
-    pub fn new(api_key: &str) -> ZyteApi {
-        ZyteApi {
-            client: reqwest::Client::new(),
-            api_key: api_key.to_string(),
-            api_url: "https://api.zyte.com/v1/extract".to_string(),
+
+impl RequestBuilder {
+    pub fn new(client: ZyteApi, method: Method, url: http::Uri) -> RequestBuilder {
+        RequestBuilder {
+            client,
+            request: Request {
+                url,
+                http_response_body: Some(true),
+                http_request_method: Some(method),
+                ..Default::default()
+            },
         }
     }
-    pub async fn get(&self, url: &str) -> Result<Response, Box<dyn Error>> {
-        let request = Request {
-            url: http::Uri::from_str(url)?,
-            http_response_body: Some(true),
-            ..Default::default()
-        };
-
-        // Use Reqwest client to POST to Zyte API and get page source
+    pub fn body(mut self, body: &str) -> RequestBuilder {
+        // todo: body should be bytes
+        self.request.http_request_body_type =
+            Some(HttpRequestBodyType::HttpRequestBody(body.to_owned()));
+        self
+    }
+    pub fn text(mut self, text: &str) -> RequestBuilder {
+        self.request.http_request_body_type =
+            Some(HttpRequestBodyType::HttpRequestText(text.to_owned()));
+        self
+    }
+    pub async fn send(self) -> Result<Response, Box<dyn Error>> {
+        // Use Reqwest client to POST to Zyte API
         let mut response = self
             .client
-            .post(&self.api_url)
-            .basic_auth(&self.api_key, Some(""))
-            .json(&request)
+            .client
+            .post(&self.client.api_url)
+            .basic_auth(&self.client.api_key, Some(""))
+            .json(&self.request)
             .send()
             .await?
             .json::<Response>()
@@ -67,5 +99,31 @@ impl ZyteApi {
         response.http_response_body = b.to_string(); // TODO: do this with serde
 
         Ok(response)
+    }
+}
+
+#[derive(Clone)]
+pub struct ZyteApi {
+    client: reqwest::Client,
+    api_key: String,
+    api_url: String,
+}
+impl ZyteApi {
+    pub fn new(api_key: &str) -> ZyteApi {
+        ZyteApi {
+            client: reqwest::Client::new(),
+            api_key: api_key.to_string(),
+            api_url: "https://api.zyte.com/v1/extract".to_string(),
+        }
+    }
+    pub async fn get(&self, url: &str) -> Result<Response, Box<dyn Error>> {
+        let url = http::Uri::from_str(url)?;
+        Ok(RequestBuilder::new(self.clone(), Method::GET, url)
+            .send()
+            .await?)
+    }
+    pub fn post(&self, url: &str) -> Result<RequestBuilder, Box<dyn Error>> {
+        let url = http::Uri::from_str(url)?;
+        Ok(RequestBuilder::new(self.clone(), Method::POST, url))
     }
 }

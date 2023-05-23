@@ -31,7 +31,30 @@ async fn get_google() {
 
 ```
 
+## Features
+
+### Requests
+
+- [ ] `HTTP`
+  - [x] `GET`
+  - [ ] `POST`
+    - [ ] `httpResponseBody`
+    - [ ] `httpResponseText`
+- [ ] `Browser`
+- [ ] `Headers`
+
+### Responses
+
+- [ ] Normal Responses
+- [ ] Error Responses
+
+## Design Goals
+
+- Have `zyte-api-rs`'s `Response` object mirror (as much as possible) the structure of the `Response` schema from the official api: <https://docs.zyte.com/zyte-api/usage/reference.html>
+- Have an easy-to-use "builder" interface similar to <https://github.com/seanmonstar/reqwest>
+- The json structure of requests to the zyte api are a bit complicated, with mutually-exclusive keys for different features -- this project aims to "make invalid states unrepresentable"
+- Learn Idiomatic Rust -- please file issues for code that is poorly written: <https://github.com/isaacimholt/zyte-api-rs/issues>.
+
 ## Notes
 
-- An important design goal is to have `zyte-api-rs`'s `Response` object mirror (as much as possible) the structure of the `Response` schema from the official api: <https://docs.zyte.com/zyte-api/usage/reference.html>
 - The status code is actually an instance of [`http::StatusCode`](https://docs.rs/http/latest/http/status/struct.StatusCode.html) which allows more useful semantics such as `status_code.is_success()`.
