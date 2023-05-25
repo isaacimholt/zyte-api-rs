@@ -23,10 +23,27 @@ use zyte_api_rs::ZyteApi;
 #[tokio::main]
 async fn get_google() {
     let zyte_api = ZyteApi::new("<MY_ZYTE_API_KEY>");
+
+    // simple GET
     let response = zyte_api.get("https://www.google.com/").await.unwrap();
+
+    // status_code is from http::Method
     if response.status_code.is_success() {
         println!("{}", response.http_response_body);
     }
+
+    let response = zyte_api
+        .post("https://httpbin.org/post")
+        .unwrap()
+        .text(r#"{"custname": "foobar"}"#)
+        .send()
+        .await
+        .unwrap();
+
+    if response.status_code.is_success() {
+        println!("{}", response.http_response_body);
+    }
+
 }
 
 ```
