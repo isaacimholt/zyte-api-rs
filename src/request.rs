@@ -1,6 +1,5 @@
 use serde::{Serialize, Serializer};
 
-
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub enum HttpRequestBodyType {
