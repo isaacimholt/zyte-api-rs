@@ -6,7 +6,7 @@ pub mod request_builder;
 pub mod response;
 pub mod zyte_api;
 
-use request::{HttpRequestBodyType, Request};
-use request_builder::RequestBuilder;
-use response::Response;
-use zyte_api::ZyteApi;
+pub use request::{HttpRequestBodyType, Request};
+pub use request_builder::RequestBuilder;
+pub use response::Response;
+pub use zyte_api::ZyteApi;
